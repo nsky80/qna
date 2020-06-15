@@ -1,3 +1,6 @@
+{% extends 'core/header.html' %}
+ 
+{% block content %}
 <a href='{% url "core:logout-view" %}'>Logout</a>
 <center>
     Welcome,{{userdetail.username}}
@@ -9,3 +12,4 @@
     {% endfor %}
     <br />
 </center>
+{% endblock %}

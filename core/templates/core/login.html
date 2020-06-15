@@ -1,3 +1,6 @@
+{% extends 'core/header.html' %}
+ 
+{% block content %}
 <form action="" method="POST">
     {% csrf_token %}
     <table>
@@ -5,3 +8,6 @@
     </table>
     <input type="submit" name="login" value="Login" />
 </form>
+<br>
+<a href='{% url "core:register-view" %}'>Register</a>
+{% endblock %}
