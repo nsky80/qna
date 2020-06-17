@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from core.models import User
+from ques_ans.models import Questions, Answers
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -40,3 +41,15 @@ class LoginForm(AuthenticationForm):
             'id': 'hi',
         }
 ))
+
+
+class AskQuestionForm(forms.ModelForm):
+    class Meta:
+        model = Questions
+        fields = ['title', 'group']
+
+
+class WriteAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answers
+        fields = ['answer_text', 'is_anonymous']

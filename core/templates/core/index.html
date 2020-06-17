@@ -1,11 +1,8 @@
 {% extends 'core/header.html' %}
 
 {% block content %}
-<a href='{% url "core:logout-view" %}'>Logout</a>
-Welcome,{{userdetail.username}}
-<br />
+<h4 class="teal-text center">Recently Asked Questions</h4>
 
-<h4 class="teal-text center">Asked Questions</h4>
 <ul class="collection">
     {% for question in page_obj %}
 
@@ -14,7 +11,7 @@ Welcome,{{userdetail.username}}
             <!-- Upvote -->
             <div class="col s3 m1 center">
                 <div class="section">
-                    <p style="margin: 0px;"><b>120</b></p>
+                    <p style="margin: 0px;"><b>{{question.upvote}}</b></p>
                     <a href="#" style="color: black;"><i class="material-icons circle green small">keyboard_arrow_up</i></a>      
                     <p style="margin: 0px;"><strong>Upvote</strong></p>
                   </div>                
@@ -22,8 +19,7 @@ Welcome,{{userdetail.username}}
 <!-- Downvote -->
             <div class="col s3 m1 center">
                 <div class="section">
-                    <p style="margin: 0px;"><b>41</b></p>
-                    <!-- <a href="#" style="color: black;"><i class="material-icons circle green small">keyboard_arrow_up</i></a>       -->
+                    <p style="margin: 0px;"><b>{{question.downvote}}</b></p>
                     <a href="#" style="color: black;"><i class="material-icons circle red small">keyboard_arrow_down</i></a>
                     <p style="margin: 0px;"><strong>Downvote</strong></p>
                   </div>                

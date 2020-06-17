@@ -7,6 +7,8 @@ from ques_ans.models import QuestionGroups, Questions, Answers
 class AnswerInline(admin.TabularInline):
     model = Answers
 
+class QuestionInline(admin.TabularInline):
+    model = Questions
 
 class QuestionsAdmin(admin.ModelAdmin):
 
@@ -16,9 +18,9 @@ class QuestionsAdmin(admin.ModelAdmin):
 
 
 class QuestionGroupsAdmin(admin.ModelAdmin):
-
+    inlines = [QuestionInline]
     class Meta:
-        QuestionGroups
+        model = QuestionGroups
 
 admin.site.register(Questions, QuestionsAdmin)
 admin.site.register(QuestionGroups, QuestionGroupsAdmin)
