@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -10,10 +10,11 @@ from django.contrib.auth.hashers import make_password
 from django.views.generic.edit import FormView
 from django.views import View
 from core.models import User
-from ques_ans.models import Questions, Answers, QuestionGroups
+from ques_ans.models import Questions, Answers
 from core.forms import LoginForm, RegisterForm, AskQuestionForm, WriteAnswerForm
 from django.contrib import messages
 from django.core.paginator import Paginator
+from taggit.models import Tag
 
 
 class WriteAnswerView(FormView):
@@ -165,6 +166,7 @@ class RegisterView(FormView):
 class AskQuestionView(FormView):
     content = {}
     content['form'] = AskQuestionForm
+    content["common_tags"] = Questions.tags.most_common()
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -184,8 +186,30 @@ class AskQuestionView(FormView):
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
+            # without this next line the tags won't be saved
+            form.save_m2m()
+
             messages.success(request, "Question Posted Successfully!")
             return redirect(reverse('core:dashboard-view'))
 
         template = 'core/ask_question.html'
         return render(request, template, self.content)
+
+def tagged(request, slug):
+    content = {}
+    tag = get_object_or_404(Tag, slug=slug)
+    common_tags = Questions.tags.most_common()[:4]
+    # question = Questions.objects.filter(tags=tag)
+
+    questions_list = Questions.objects.filter(tags=tag).order_by("-created_on")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(questions_list, 10)
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    content["page_obj"] = page_obj
+    return render(request, 'core/index.html', content)

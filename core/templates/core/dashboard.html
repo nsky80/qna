@@ -54,7 +54,13 @@ Welcome,{{userdetail.username}}
                     </a>                    
                     <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong> by <strong> {{question.user}}</strong>
                     <br>
-                    <b>Tags:</b>
+                <!-- Tags will goes here -->
+                    {% for mt in question.tags.all %}
+                        <div class="chip">
+                            <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+                        </div>
+                    {% endfor %}
+        
                     </p>
                               
                 </div>                

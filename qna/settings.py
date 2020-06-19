@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'ques_ans',
+    'taggit',
 ]
 
 MIDDLEWARE = [

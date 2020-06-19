@@ -11,4 +11,5 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout-view'),
     path('ask_question/', views.AskQuestionView.as_view(), name='ask_question-view'),
     path('questions/<int:question_id>/<str:question_slug>', views.WriteAnswerView.as_view(), name="write_answer-view"),
+    path('tag/<str:slug>', views.tagged, name="tagged-view"),
 ]
