@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404, Http404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 from django.views.generic.edit import FormView
 from django.views import View
 from core.models import User
-from ques_ans.models import Questions, Answers
+from ques_ans.models import Questions, Answers, Vote
 from core.forms import LoginForm, RegisterForm, AskQuestionForm, WriteAnswerForm
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -213,3 +213,47 @@ def tagged(request, slug):
 
     content["page_obj"] = page_obj
     return render(request, 'core/index.html', content)
+
+
+def question_vote(request, question_id, vote_type):
+    question = Questions.objects.get(pk=question_id)
+    user = request.user
+    # checking whether user already voted it or not
+    try:
+        vote = Vote.objects.get(question=question, user=user)
+    except Exception:
+        vote = Vote.objects.create(question=question, user=user, user_vote=3)
+    if vote_type == "up":
+        # if already voted then downvote must be overriden
+        if vote.user_vote == 2:
+            question.downvote -= 1
+            vote.user_vote = 1
+            question.upvote += 1
+        elif vote.user_vote == 1:    # checking whether already voted if voted then make it none
+            question.upvote -= 1
+            vote.user_vote = 3
+        else:
+            question.upvote += 1
+            vote.user_vote = 1
+    elif vote_type == "down":     # handling downvote
+        if vote.user_vote == 1:
+            question.upvote -= 1
+            vote.user_vote = 2
+            question.downvote += 1
+        elif vote.user_vote == 2:    # checking whether already voted if voted then make it none
+            question.downvote -= 1
+            vote.user_vote = 3
+        else:
+            question.downvote += 1
+            vote.user_vote = 2
+    else:
+        raise Http404
+    vote.save()
+    question.save()
+    messages.success(request, request.META.get('HTTP_REFERER'))
+    return redirect("/")
+
+    # if vote_type == 'up':
+    #     pass
+    # else:
+    #     pass

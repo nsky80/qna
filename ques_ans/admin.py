@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ques_ans.models import Questions, Answers
+from ques_ans.models import Questions, Answers, Vote
 
 # admin.site.register(QuestionGroups)
 # admin.site.register(Questions)
@@ -17,3 +17,4 @@ class QuestionsAdmin(admin.ModelAdmin):
 
 admin.site.register(Questions, QuestionsAdmin)
 admin.site.register(Answers)
+admin.site.register(Vote)

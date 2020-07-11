@@ -42,3 +42,20 @@ class Answers(models.Model):
     class Meta:
         verbose_name_plural = "Answers"
 
+
+class Vote(models.Model):
+    VOTE_CHOICES = (
+        (1, 'up'),
+        (2, 'down'),
+        (3, 'N/A'),
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False)
+    question = models.ForeignKey(Questions, on_delete=models.CASCADE, null=False)
+    user_vote = models.IntegerField(choices=VOTE_CHOICES, null=True)
+
+    class Meta:
+        unique_together = ('user', 'question',)
+
+
+    def __str__(self):
+        return self.question.title + " username: " + self.user.username
