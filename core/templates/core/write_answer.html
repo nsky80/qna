@@ -1,47 +1,72 @@
 {% extends 'core/header.html' %}
 
 {% block content %}
+{% load upvote_tags %}
 <ul class="collection">
-    <li class="collection-item" style="padding: 0px; background-color:ivory;">
-    <div class="row" style="margin: 0px;">
-        <div class="col s6 m1 center">
-            <div class="section">
-                <p style="margin: 0px;"><b>{{question.upvote}}</b></p>
-                <a href="#" style="color: black;"><i class="material-icons circle green small">keyboard_arrow_up</i></a>      
-                <p style="margin: 0px;"><strong>Upvote</strong></p>
-              </div>                
-        </div>
-        <div class="col s6 m1 center">
-            <div class="section">
-                <p style="margin: 0px;"><b>{{question.downvote}}</b></p>
-                <a href="#" style="color: black;"><i class="material-icons circle red small">keyboard_arrow_down</i></a>
-                <p style="margin: 0px;"><strong>Downvote</strong></p>
-              </div>                
-        </div>
-        <div class="col s12 m10">
-            <!-- <span style="margin-left: 10px;"> -->
-            <h5 style="margin-left: 10px;" class="teal-text">{{question}}</h5>
-            
-            <b style="margin-left: 10px;">Views</b>: {{question.views}} <br>
-            <b style="margin-left: 10px;">Asked on</b>: {{question.created_on}} <br>
-            <b style="margin-left: 10px;">Modified on</b>: {{question.updated_on}} <br>
-            <hr>
-        <!-- </span> -->
-        </div>
-    </div>
-    </li>
+    <li class="collection-item" style="background-color:#fff;">
+        <div class="row" style="margin: 0px;">
 
+            <div class="col s12 m12">
+                <!-- <span style="margin-left: 10px;"> -->
+                <h5 class="teal-text">{{question}}</h5>
+
+                <b>Views</b>: {{question.views}} <br>
+                <b>Asked on</b>: {{question.created_on}} <br>
+                <b>Modified on</b>: {{question.updated_on}} <br>
+                <br>
+            </div>
+        </div>
+    </li>
+    <li class="collection-item" style="padding: 0px; background-color:#f3f9fc;">
+        <div class="row">
+            <div class="col s6 m3 center">
+                <div class="section">
+                    <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
+                    <a href="/vote/{{question.id}}/up?next={{ request.path }}" style="color: black;">
+                        <i class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>      
+                    <p style="margin: 0px;"><strong>Upvote</strong></p>
+                  </div>                
+            </div>
+<!-- Downvote -->
+            <div class="col s6 m3 center">
+                <div class="section">
+                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
+                    <a href="/vote/{{question.id}}/down?next={{ request.path }}" style="color: black;"><i class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
+                    <p style="margin: 0px;"><strong>Downvote</strong></p>
+                  </div>                
+            </div>
+<!-- Bookmark or Favorite -->
+            <div class="col s6 m3 center">
+                <div class="section">
+                    <p style="margin: 0px;"><b>{% bookmarks ques_obj=question %}</b></p>
+                    <a href="/vote/{{question.id}}/bookmark?next={{request.path}}" style="color: black;"><i
+                            class="material-icons circle small">{% has_voted user=user question=question loc=3 %}</i></a>
+                    <p style="margin: 0px;"><strong>Bookmark</strong></p>
+                </div>
+            </div>
+<!-- History -->
+            <div class="col s6 m3 center">
+                <div class="section">
+                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
+                    <a href="#" style="color: black;"><i
+                            class="material-icons circle small">history</i></a>
+                    <p style="margin: 0px;"><strong>History</strong></p>
+                </div>
+            </div>
+        </div>
+    </li>
+<!-- write answer button section -->
     <li class="collection-item">
         <div class="row" style="margin-bottom: 0px;">
-            <div class = "col s6">
+            <div class="col s6">
                 <h6 class="indigo-text"><b>{{question.answers_set.all|length}} Answer(s)</b>
             </div>
-            <div class = "col s6">
+            <div class="col s6">
                 <a href="#write_answer" class="waves-effect waves-light btn right">Write an Answer</a>
             </div>
         </div>
 
-    </h6>
+        </h6>
 
     </li>
     {% for answer in question.answers_set.all %}

@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 from django.views.generic.edit import FormView
 from django.views import View
 from core.models import User
-from ques_ans.models import Questions, Answers, Vote
+from ques_ans.models import Questions, Answers, Activity #, Vote
 from core.forms import LoginForm, RegisterForm, AskQuestionForm, WriteAnswerForm
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -216,44 +216,55 @@ def tagged(request, slug):
 
 
 def question_vote(request, question_id, vote_type):
+    # return HttpResponse("Question Vote")
     question = Questions.objects.get(pk=question_id)
     user = request.user
-    # checking whether user already voted it or not
-    try:
-        vote = Vote.objects.get(question=question, user=user)
-    except Exception:
-        vote = Vote.objects.create(question=question, user=user, user_vote=3)
-    if vote_type == "up":
-        # if already voted then downvote must be overriden
-        if vote.user_vote == 2:
-            question.downvote -= 1
-            vote.user_vote = 1
-            question.upvote += 1
-        elif vote.user_vote == 1:    # checking whether already voted if voted then make it none
-            question.upvote -= 1
-            vote.user_vote = 3
-        else:
-            question.upvote += 1
-            vote.user_vote = 1
-    elif vote_type == "down":     # handling downvote
-        if vote.user_vote == 1:
-            question.upvote -= 1
-            vote.user_vote = 2
-            question.downvote += 1
-        elif vote.user_vote == 2:    # checking whether already voted if voted then make it none
-            question.downvote -= 1
-            vote.user_vote = 3
-        else:
-            question.downvote += 1
-            vote.user_vote = 2
-    else:
-        raise Http404
-    vote.save()
-    question.save()
-    messages.success(request, request.META.get('HTTP_REFERER'))
-    return redirect("/")
 
-    # if vote_type == 'up':
-    #     pass
-    # else:
-    #     pass
+    # first check whether it is voting or it is bookmarking a question by a user
+    if vote_type == "up" or vote_type == "down":
+        act = question.activities.filter(user=user, activity_type = Activity.UP_VOTE) or question.activities.filter(user=user, activity_type = Activity.DOWN_VOTE)
+        # if already upvoted then do operation on that i.e. no need for creating new object
+        # if earlier vote had upvote and again upvote coming then delete the object because
+        # user wanted to undo the operation
+        if act:
+            obj = act[0]
+            if vote_type == "up":
+                # it means user earlier upvoted this question but now he wants to undo that opr
+                if obj.activity_type == Activity.UP_VOTE:
+                    obj.delete()
+                else:
+                    obj.activity_type = Activity.UP_VOTE
+                    obj.save()
+                    messages.success(request, "Upvoted Successfully!")
+            else:
+                if obj.activity_type == Activity.DOWN_VOTE:
+                    obj.delete()
+                else:
+                    obj.activity_type = Activity.DOWN_VOTE
+                    obj.save()
+                    messages.success(request, "Downvoted Successfully!")
+        # it means object doesn't exist as of now, need to create new table with vote
+        else:
+            if vote_type == "up":
+                Activity.objects.create(content_object=question, activity_type=Activity.UP_VOTE, user=request.user)
+                messages.success(request, "Upvoted Successfully!")
+            # now it must be down vote
+            else:
+                Activity.objects.create(content_object=question, activity_type=Activity.DOWN_VOTE, user=request.user)
+                messages.success(request, "Downvoted Successfully!")
+
+    # Here we are handling with bookmarking of question by perticular user
+    else:
+        act = question.activities.filter(user=user, activity_type = Activity.FAVORITE)
+        if act:
+            obj = act[0]
+            obj.delete()
+        else:
+            Activity.objects.create(content_object=question, activity_type=Activity.FAVORITE, user=request.user)
+            messages.success(request, "Bookmarked/Saved Successfully!")
+
+    next_url = request.GET.get('next')
+    if next_url:
+        return HttpResponseRedirect(next_url)
+    else:
+        return redirect("/")

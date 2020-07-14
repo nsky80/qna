@@ -7,25 +7,27 @@ Welcome,{{userdetail.username}}
 
 <h4 class="teal-text center">Asked Questions</h4>
 <ul class="collection >
-    {% for question in page_obj %}
+    {% load upvote_tags %}
 
-    <li class="collection-item card" style="padding: 0px;"> 
+    {% for question in page_obj %}
+    <li class="collection-item" style="padding: 0px;"> 
         <div class="row" style="margin: 0px;">
-            <!-- Upvote -->
+<!-- Upvote -->
             <div class="col s3 m1 center">
                 <div class="section">
-                    <p style="margin: 0px;"><b>{{question.upvote}}</b></p>
-                    <a href="/vote/{{question.id}}/up" style="color: black;"><i class="material-icons circle green small">keyboard_arrow_up</i></a>      
+                    <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
+                    <a href="/vote/{{question.id}}/up" style="color: black;">
+                        <i class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>      
                     <p style="margin: 0px;"><strong>Upvote</strong></p>
                   </div>                
             </div>
 <!-- Downvote -->
             <div class="col s3 m1 center">
                 <div class="section">
-                    <p style="margin: 0px;"><b>{{question.downvote}}</b></p>
-                    <a href="/vote/{{question.id}}/down" style="color: black;"><i class="material-icons circle red small">keyboard_arrow_down</i></a>
+                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
+                    <a href="/vote/{{question.id}}/down" style="color: black;"><i class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
                     <p style="margin: 0px;"><strong>Downvote</strong></p>
-                </div>                
+                  </div>                
             </div>
 
 <!-- Answers section -->
@@ -33,7 +35,7 @@ Welcome,{{userdetail.username}}
                 <div class="section center">
                     <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
 
-                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i class="material-icons circle yellow small">assignment_turned_in</i></a>
+                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
                     <p style="margin: 0px;"><strong>Answers</strong></p>
                   </div>  
             </div>
