@@ -2,123 +2,169 @@
 
 {% block content %}
 {% load upvote_tags %}
-<ul class="collection">
-    <li class="collection-item" style="background-color:#fff;">
-        <div class="row" style="margin: 0px;">
 
-            <div class="col s12 m12">
-                <!-- <span style="margin-left: 10px;"> -->
-                <h5 class="teal-text">{{question}}</h5>
+<div class="row" style="background-color: rgba(241, 247, 240, 0.438);">
+    <!-- Left Side Menu  -->
+    <div class="col hide-on-small-only s12 m2 l1" style="padding-left:5px; border-top: 2px solid #004d40;">
+        <ul class="section table-of-contents fixed">
+            <li><a href="#introduction"><b>Q&A Home</b></a></li>
+            <li><a href="#introduction">Tags</a></li>
+            <li><a href="#info_does_not_collect">Users</a></li>
+            <hr>
+            <li><a href="#info_does_not_collect">Trending</a></li>
+            <li><a href="#user_info_status">Help
+                </a></li>
+        </ul>
+    </div>
+    <div class="col hide-on-med-and-up s12">
+        <ul class="section table-of-contents ">
+            <li><a href="#introduction">Tags</a></li>
+            <li><a href="#info_does_not_collect">Users</a></li>
+            <li><a href="#user_info_status">Help
+                </a></li>
+        </ul>
+    </div>
 
-                <b>Views</b>: {{question.views}} <br>
-                <b>Asked on</b>: {{question.created_on}} <br>
-                <b>Modified on</b>: {{question.updated_on}} <br>
-                <br>
-            </div>
-        </div>
-    </li>
-    <li class="collection-item" style="padding: 0px; background-color:#f3f9fc;">
-        <div class="row">
 
-<!-- Upvote -->
-            <div class="col s3 m3 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
-                    {% if user.is_authenticated %}
-                    <a href="/vote/{{question.id}}/up" style="color: black;">
-                        <i
-                            class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>
-                    {% else %}
-                    <a class="modal-trigger" href="#login_register_modal" style="color: black;">
-                        <i class="material-icons circle grey small">keyboard_arrow_up</i></a>
-                    {% endif %}
-                    <p style="margin: 0px;"><strong>Upvote</strong></p>
+<!-- Middle Side Content Goes Here -->
+    <div class="col s12 m8 l8"
+        style="padding-left:10px; padding-right:10px;background-color: rgb(250, 250, 250);border-left: 3px solid #004d40;border-right: 3px solid #004d40;; border-top: 2px solid #004d40;">
+
+
+            <!-- <li class="collection-item" style="background-color:#fff;"> -->
+                <div class="row" style="margin: 0px;">
+
+                    <div class="col s12 m12">
+                        <!-- <span style="margin-left: 10px;"> -->
+                        <h5 class="teal-text">{{question}}</h5>
+
+                        <b>Views</b>: {{question.views}} <br>
+                        <b>Asked on</b>: {{question.created_on}} <br>
+                        <b>Modified on</b>: {{question.updated_on}} <br>
+                        <br>
+                    </div>
                 </div>
-            </div>
-<!-- Downvote -->
-            <div class="col s3 m3 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
-                    {% if user.is_authenticated %}
-                    <a href="/vote/{{question.id}}/down" style="color: black;"><i
-                            class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
-                    {% else %}
-                    <a class="modal-trigger" href="#login_register_modal" style="color: black;"><i
-                            class="material-icons circle grey small">keyboard_arrow_down</i></a>
+                <hr>
+            <!-- </li> -->
+            <ul class="collection">
 
-                    {% endif %}
-                    <p style="margin: 0px;"><strong>Downvote</strong></p>
-                </div>
-            </div>
-<!-- Bookmark or Favorite -->
-            <div class="col s3 m3 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% bookmarks ques_obj=question %}</b></p>
-                    {% if user.is_authenticated %}
-                    <a href="/vote/{{question.id}}/bookmark?next={{request.path}}" style="color: black;"><i
-                            class="material-icons circle small">{% has_voted user=user question=question loc=3 %}</i></a>
+            <li class="collection-item" style="padding: 0px; background-color:#f3f9fc;">
+                <div class="row">
+
+                    <!-- Upvote -->
+                    <div class="col s3 m3 center">
+                        <div class="section">
+                            <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
+                            {% if user.is_authenticated %}
+                            <a href="/vote/{{question.id}}/up?next={{request.path}}" style="color: black;">
+                                <i
+                                    class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>
+                            {% else %}
+                            <a class="modal-trigger" href="#login_register_modal" style="color: black;">
+                                <i class="material-icons circle grey small">keyboard_arrow_up</i></a>
+                            {% endif %}
+                            <p style="margin: 0px;"><strong>Upvote</strong></p>
+                        </div>
+                    </div>
+                    <!-- Downvote -->
+                    <div class="col s3 m3 center">
+                        <div class="section">
+                            <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
+                            {% if user.is_authenticated %}
+                            <a href="/vote/{{question.id}}/down?next={{request.path}}" style="color: black;"><i
+                                    class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
                             {% else %}
                             <a class="modal-trigger" href="#login_register_modal" style="color: black;"><i
-                                class="material-icons circle small">bookmark_border</i></a>
-    
+                                    class="material-icons circle grey small">keyboard_arrow_down</i></a>
+
+                            {% endif %}
+                            <p style="margin: 0px;"><strong>Downvote</strong></p>
+                        </div>
+                    </div>
+                    <!-- Bookmark or Favorite -->
+                    <div class="col s3 m3 center">
+                        <div class="section">
+                            <p style="margin: 0px;"><b>{% bookmarks ques_obj=question %}</b></p>
+                            {% if user.is_authenticated %}
+                            <a href="/vote/{{question.id}}/bookmark?next={{request.path}}" style="color: black;"><i
+                                    class="material-icons circle small">{% has_voted user=user question=question loc=3 %}</i></a>
+                            {% else %}
+                            <a class="modal-trigger" href="#login_register_modal" style="color: black;"><i
+                                    class="material-icons circle small">bookmark_border</i></a>
+
                             {% endif %}
 
                             <p style="margin: 0px;"><strong>Bookmark</strong></p>
+                        </div>
+                    </div>
+                    <!-- History -->
+                    <div class="col s3 m3 center">
+                        <div class="section">
+                            <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
+                            <a href="#" style="color: black;"><i class="material-icons circle small">history</i></a>
+                            <p style="margin: 0px;"><strong>History</strong></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <!-- History -->
-            <div class="col s3 m3 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
-                    <a href="#" style="color: black;"><i class="material-icons circle small">history</i></a>
-                    <p style="margin: 0px;"><strong>History</strong></p>
+            </li>
+            <!-- write answer button section -->
+            <li class="collection-item">
+                <div class="row" style="margin-bottom: 0px;">
+                    <div class="col s6">
+                        <h6 class="indigo-text"><b>{{question.answers_set.all|length}} Answer(s)</b>
+                    </div>
+                    <div class="col s6">
+                        <a href="#write_answer" class="waves-effect waves-light btn right">Write an Answer</a>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </li>
-    <!-- write answer button section -->
-    <li class="collection-item">
-        <div class="row" style="margin-bottom: 0px;">
-            <div class="col s6">
-                <h6 class="indigo-text"><b>{{question.answers_set.all|length}} Answer(s)</b>
-            </div>
-            <div class="col s6">
-                <a href="#write_answer" class="waves-effect waves-light btn right">Write an Answer</a>
-            </div>
-        </div>
 
-        </h6>
+                </h6>
 
-    </li>
-    {% for answer in question.answers_set.all %}
-    <li class="collection-item">{{answer.answer_text}}
+            </li>
+            {% for answer in question.answers_set.all %}
+            <li class="collection-item">{{answer.answer_text|safe}}
 
-    </li>
-    {% endfor %}
+            </li>
+            {% endfor %}
 
-</ul>
-<hr>
-<ul class="collection with-header">
-    <li class="collection-header">
-        <h6 class="indigo-text"><b>Write Your Answer Here!</b>
-    </li>
-    <li class="collection-item section scrollspy" id="write_answer">
-        <form action="" method="POST">
-            {% csrf_token %}
-            <table>
-                {{ form.as_table }}
-            </table>
-            <br>
-        {% if user.is_authenticated %}
+        </ul>
+        <hr>
 
-            <button class="btn waves-effect waves-light" type="submit" name="action">Post Answer
-                <i class="material-icons right">send</i>
-            </button>
-        {% else %}
-        <a class="waves-effect waves-light blue btn modal-trigger" href="#login_register_modal">Post Answer</a>
-        {% endif %}
-        </form>
-    </li>
-</ul>
-{% include 'core/includes/login_register_modal.html' %}
+        <ul class="collection with-header">
+            <li class="collection-header">
+                <h6 class="indigo-text"><b>Write Your Answer Here!</b>
+            </li>
+            {{ form.media }}
+
+            <li class="collection-item section scrollspy" id="write_answer">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <br>
+                    {% if user.is_authenticated %}
+
+                    <button class="btn waves-effect waves-light" type="submit" name="action">Post Answer
+                        <i class="material-icons right">send</i>
+                    </button>
+                    {% else %}
+                    <a class="waves-effect waves-light blue btn modal-trigger" href="#login_register_modal">Post
+                        Answer</a>
+                    {% endif %}
+                </form>
+            </li>
+        </ul>
+        {% include 'core/includes/login_register_modal.html' %}
+
+    </div>
+
+
+    <!-- Right side content goes here -->
+    <div class="col s12 m2 l3" style="border-top: 2px solid #004d40;">
+        <h6><b>Related Questions</b></h6>
+
+    </div>
+
+</div>
+
+
 {% endblock %}

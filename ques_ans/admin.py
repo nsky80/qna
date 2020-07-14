@@ -1,8 +1,17 @@
 from django.contrib import admin
 from ques_ans.models import Questions, Answers, Activity #, Vote
+from tinymce.widgets import TinyMCE
+from django.db import models
 
 class AnswerInline(admin.TabularInline):
     model = Answers
+
+
+class AnswerOverride(admin.ModelAdmin):   
+    formfield_overrides = {
+        models.TextField: {'widget': TinyMCE()},
+        }
+
 
 class QuestionsAdmin(admin.ModelAdmin):
 
@@ -13,5 +22,5 @@ class QuestionsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Questions, QuestionsAdmin)
-admin.site.register(Answers)
+admin.site.register(Answers, AnswerOverride)
 admin.site.register(Activity)

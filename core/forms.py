@@ -2,6 +2,13 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from core.models import User
 from ques_ans.models import Questions, Answers
+from tinymce.widgets import TinyMCE
+
+# TinyMCE editer for writing new content used both end User and Admin
+class TinyMCEWidget(TinyMCE):
+    def use_required_attribute(self, *args):
+        return False
+
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -50,6 +57,12 @@ class AskQuestionForm(forms.ModelForm):
 
 
 class WriteAnswerForm(forms.ModelForm):
+    answer_text = forms.CharField(label="Main Content", 
+        widget=TinyMCEWidget(
+            attrs={'required': True, 'cols': 40, 'rows': 10}
+        )
+    )
+
     class Meta:
         model = Answers
         fields = ['answer_text', 'is_anonymous']

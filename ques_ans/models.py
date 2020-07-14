@@ -68,7 +68,9 @@ class Questions(models.Model):
 class Answers(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     question = models.ForeignKey(Questions, on_delete=models.CASCADE)
-    answer_text = models.TextField()
+    # answer_text = models.TextField()
+    answer_text = models.TextField("Main Content", help_text='Write here your message!')
+
     created_on = models.DateTimeField(default=timezone.now)
     is_anonymous = models.BooleanField(default=False)
     # with the Answer model, user can only up vote/down vote
