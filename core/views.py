@@ -27,17 +27,17 @@ class WriteAnswerView(FormView):
         return super(WriteAnswerView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, question_id, question_slug):
+        question = Questions.objects.get(pk=question_id)
         if request.user.is_authenticated:
-            question = Questions.objects.get(pk=question_id)
             # It counts the number of views to question
             if question.user != request.user:
                 question.views += 1
                 question.save()
-            self.content["question"] = question
-            return render(request, 'core/write_answer.html', self.content)
-        else:
-            messages.info(request, "Login Required!")
-            return redirect(reverse("core:login-view"))
+        self.content["question"] = question
+        return render(request, 'core/write_answer.html', self.content)
+        # else:
+            # messages.info(request, "Login Required!")
+            # return redirect(reverse("core:login-view"))
 
     def post(self, request, question_id, question_slug):
 

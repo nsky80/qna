@@ -46,7 +46,7 @@ class LoginForm(AuthenticationForm):
 class AskQuestionForm(forms.ModelForm):
     class Meta:
         model = Questions
-        fields = ['title', 'tags']
+        fields = ['title', 'question_description', 'tags']
 
 
 class WriteAnswerForm(forms.ModelForm):

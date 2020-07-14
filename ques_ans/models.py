@@ -41,11 +41,11 @@ class Activity(models.Model):
 
 class Questions(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    title = models.TextField()
+    title = models.CharField(verbose_name="Question Title/Heading", null=False, blank=False, max_length=500)
     # group = models.ForeignKey('QuestionGroups', on_delete=models.CASCADE, null=True, blank=True)
     created_on = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
-
+    question_description = models.TextField(null=True)
     # It will keep track of number of upvotes, downvotes and bookmarks
     # Users can up vote/down vote and favorite it.
     activities = GenericRelation(Activity)

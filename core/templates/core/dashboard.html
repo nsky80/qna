@@ -6,69 +6,75 @@ Welcome,{{userdetail.username}}
 <br />
 
 <h4 class="teal-text center">Asked Questions</h4>
-<ul class="collection >
+<ul class="collection">
     {% load upvote_tags %}
 
     {% for question in page_obj %}
-    <li class="collection-item" style="padding: 0px;"> 
+    <li class="collection-item" style="padding: 0px;">
         <div class="row" style="margin: 0px;">
-<!-- Upvote -->
+            <!-- Upvote -->
             <div class="col s3 m1 center">
                 <div class="section">
                     <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
                     <a href="/vote/{{question.id}}/up" style="color: black;">
-                        <i class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>      
+                        <i
+                            class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>
                     <p style="margin: 0px;"><strong>Upvote</strong></p>
-                  </div>                
+                </div>
             </div>
-<!-- Downvote -->
+            <!-- Downvote -->
             <div class="col s3 m1 center">
                 <div class="section">
                     <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
-                    <a href="/vote/{{question.id}}/down" style="color: black;"><i class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
+                    <a href="/vote/{{question.id}}/down" style="color: black;"><i
+                            class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
                     <p style="margin: 0px;"><strong>Downvote</strong></p>
-                  </div>                
+                </div>
             </div>
 
-<!-- Answers section -->
+            <!-- Answers section -->
             <div class="col s3 m1">
                 <div class="section center">
                     <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
 
-                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
+                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i
+                            class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
                     <p style="margin: 0px;"><strong>Answers</strong></p>
-                  </div>  
+                </div>
             </div>
-        <!-- Views section -->
+            <!-- Views section -->
             <div class="col s3 m1">
                 <div class="section center">
                     <p style="margin: 0px;"><b>{{question.views}}</b></p>
                     <a href="#" style="color: black;"><i class="material-icons circle small">view_comfy</i></a>
                     <p style="margin: 0px;"><strong>Views</strong></p>
-                </div>  
+                </div>
             </div>
-        <!-- Question Section -->
+            <!-- Question Section -->
             <div class="col s12 m8">
-                <div class="section" >
+                <div class="section">
                     <a href="/questions/{{question.id}}/{{question.slug}}">
-                        <h6 style="margin: 4px; margin-top: -5px;" class="teal-text"><strong>{{question.title}}</strong></h6>
-                    </a>                    
-                    <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong> by <strong> {{question.user}}</strong>
-                    <br>
-                <!-- Tags will goes here -->
-                    {% for mt in question.tags.all %}
-                        <div class="chip">
-                            <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
-                        </div>
+                        <h6 style="margin: 4px; margin-top: -5px;" class="teal-text"><strong>{{question.title}}</strong>
+                        </h6>
+                    </a>
+                    <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong> by
+                        <strong>
+                            {{question.user}}</strong>
+                        <br>
+                        <!-- Tags will goes here -->
+                        {% for mt in question.tags.all %}
+                    <div class="chip">
+                        <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+                    </div>
                     {% endfor %}
-        
+
                     </p>
-                              
-                </div>                
+
+                </div>
             </div>
         </div>
     </li>
-{% endfor %}
+    {% endfor %}
 </ul>
 {% include 'core/includes/pagination.html' %}
 

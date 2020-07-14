@@ -13,8 +13,13 @@
             <div class="col s3 m1 center">
                 <div class="section">
                     <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
-                    <a href="/vote/{{question.id}}/up" style="color: black;">
-                        <i class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>      
+                        {% if user.is_authenticated %}
+                            <a href="/vote/{{question.id}}/up" style="color: black;">
+                            <i class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a> 
+                        {% else %} 
+                            <a class="modal-trigger" href="#login_register_modal" style="color: black;">
+                            <i class="material-icons circle grey small">keyboard_arrow_up</i></a> 
+                        {% endif %}
                     <p style="margin: 0px;"><strong>Upvote</strong></p>
                   </div>                
             </div>
@@ -22,8 +27,13 @@
             <div class="col s3 m1 center">
                 <div class="section">
                     <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
-                    <a href="/vote/{{question.id}}/down" style="color: black;"><i class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
-                    <p style="margin: 0px;"><strong>Downvote</strong></p>
+                    {% if user.is_authenticated %}
+                        <a href="/vote/{{question.id}}/down" style="color: black;"><i class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
+                    {% else %}
+                        <a class="modal-trigger" href="#login_register_modal" style="color: black;"><i class="material-icons circle grey small">keyboard_arrow_down</i></a>
+
+                    {% endif %}
+                        <p style="margin: 0px;"><strong>Downvote</strong></p>
                   </div>                
             </div>
 
@@ -31,8 +41,12 @@
             <div class="col s3 m1">
                 <div class="section center">
                     <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
+                    {% if user.is_authenticated %}
+                        <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
+                    {% else %}
+                        <a class="modal-trigger" href="#login_register_modal" style="color: black;"><i class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
 
-                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
+                    {% endif %}
                     <p style="margin: 0px;"><strong>Answers</strong></p>
                   </div>  
             </div>
@@ -67,5 +81,5 @@
 {% endfor %}
 </ul>
 {% include 'core/includes/pagination.html' %}
-
+{% include 'core/includes/login_register_modal.html' %}
 {% endblock %}
