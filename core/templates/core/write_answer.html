@@ -5,30 +5,11 @@
 
 <div class="row" style="background-color: rgba(241, 247, 240, 0.438);">
     <!-- Left Side Menu  -->
-    <div class="col hide-on-small-only s12 m2 l1" style="padding-left:5px; border-top: 2px solid #004d40;">
-        <ul class="section table-of-contents fixed">
-            <li><a href="#introduction"><b>Q&A Home</b></a></li>
-            <li><a href="#introduction">Tags</a></li>
-            <li><a href="#info_does_not_collect">Users</a></li>
-            <hr>
-            <li><a href="#info_does_not_collect">Trending</a></li>
-            <li><a href="#user_info_status">Help
-                </a></li>
-        </ul>
-    </div>
-    <div class="col hide-on-med-and-up s12">
-        <ul class="section table-of-contents ">
-            <li><a href="#introduction">Tags</a></li>
-            <li><a href="#info_does_not_collect">Users</a></li>
-            <li><a href="#user_info_status">Help
-                </a></li>
-        </ul>
-    </div>
-
+    {% include 'core/includes/side_navbar_for_qna.html' %}
 
 <!-- Middle Side Content Goes Here -->
     <div class="col s12 m8 l8"
-        style="padding-left:10px; padding-right:10px;background-color: rgb(250, 250, 250);border-left: 3px solid #004d40;border-right: 3px solid #004d40;; border-top: 2px solid #004d40;">
+        style="padding:25px;background-color: rgb(250, 250, 250);border-left: 3px solid #004d40;border-right: 3px solid #004d40;; border-top: 2px solid #004d40;">
 
 
             <!-- <li class="collection-item" style="background-color:#fff;"> -->
@@ -130,13 +111,9 @@
         </ul>
         <hr>
 
-        <ul class="collection with-header">
-            <li class="collection-header">
-                <h6 class="indigo-text"><b>Write Your Answer Here!</b>
-            </li>
+            <h6 class="indigo-text section scrollspy" id="write_answer"><b>Write Your Answer Here!</b>
             {{ form.media }}
 
-            <li class="collection-item section scrollspy" id="write_answer">
                 <form action="" method="POST">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -151,8 +128,6 @@
                         Answer</a>
                     {% endif %}
                 </form>
-            </li>
-        </ul>
         {% include 'core/includes/login_register_modal.html' %}
 
     </div>

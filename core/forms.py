@@ -51,6 +51,11 @@ class LoginForm(AuthenticationForm):
 
 
 class AskQuestionForm(forms.ModelForm):
+    question_description = forms.CharField(label="Question Description", 
+        widget=TinyMCEWidget(
+            attrs={'required': True, 'cols': 40, 'rows': 10}
+        )
+    )
     class Meta:
         model = Questions
         fields = ['title', 'question_description', 'tags']
