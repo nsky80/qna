@@ -55,7 +55,7 @@ class Questions(models.Model):
     tags = TaggableManager()
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title[:80])
+        self.slug = slugify(self.title[:50])
         super(Questions, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -70,11 +70,12 @@ class Answers(models.Model):
     question = models.ForeignKey(Questions, on_delete=models.CASCADE)
     # answer_text = models.TextField()
     answer_text = models.TextField("Main Content", help_text='Write here your message!')
+    updated_on = models.DateTimeField(default=timezone.now)
 
     created_on = models.DateTimeField(default=timezone.now)
     is_anonymous = models.BooleanField(default=False)
     # with the Answer model, user can only up vote/down vote
-    votes = GenericRelation(Activity)
+    activities = GenericRelation(Activity)
 
     def __str__(self):
         return str(self.id) + " " + self.answer_text[:20]

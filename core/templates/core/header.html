@@ -15,11 +15,12 @@
 
     </head>
 
-    <body style="background-color: #e1ecf4;">
+    <body style="background-color:rgba(243, 248, 242, 1);">
         {% include 'core/includes/navbar.html' %}
         {% include 'core/includes/messaging.html' %}
         {% block content %}
         {% endblock %}
+        {% include 'core/includes/footer.html' %}
         <script type="text/javascript">M.AutoInit();</script>
     </body>
 </html>

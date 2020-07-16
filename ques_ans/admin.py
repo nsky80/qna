@@ -16,6 +16,10 @@ class AnswerOverride(admin.ModelAdmin):
 class QuestionsAdmin(admin.ModelAdmin):
 
     inlines = [AnswerInline]
+    formfield_overrides = {
+        models.TextField: {'widget': TinyMCE()},
+        }
+
     class Meta:
         model = Questions
 

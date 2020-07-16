@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout-view'),
     path('ask_question/', views.AskQuestionView.as_view(), name='ask_question-view'),
     path('questions/<int:question_id>/<str:question_slug>', views.WriteAnswerView.as_view(), name="write_answer-view"),
-    path('vote/<int:question_id>/<str:vote_type>', views.question_vote, name="vote-view"),
+    path('vote/<str:object_type>/<int:question_id>/<str:vote_type>', views.question_vote, name="vote-view"),
+    path('tags/', views.tags, name="tags-view"),
     path('tag/<str:slug>', views.tagged, name="tagged-view"),
 ]

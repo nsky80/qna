@@ -66,7 +66,7 @@ class IndexView(View):
             page_obj = paginator.page(1)
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
-
+        self.content["page_title"] = "Recently Asked Questions"
         self.content["page_obj"] = page_obj
         return render(request, 'core/index.html', self.content)
 
@@ -195,12 +195,12 @@ class AskQuestionView(FormView):
         template = 'core/ask_question.html'
         return render(request, template, self.content)
 
+# if user click any tag then this view called
 def tagged(request, slug):
     content = {}
     tag = get_object_or_404(Tag, slug=slug)
     common_tags = Questions.tags.most_common()[:4]
     # question = Questions.objects.filter(tags=tag)
-
     questions_list = Questions.objects.filter(tags=tag).order_by("-created_on")
     page = request.GET.get('page', 1)
     paginator = Paginator(questions_list, 10)
@@ -210,14 +210,27 @@ def tagged(request, slug):
         page_obj = paginator.page(1)
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
-
+    content["page_title"] = "Tag: " + str(slug)
     content["page_obj"] = page_obj
     return render(request, 'core/index.html', content)
 
 
-def question_vote(request, question_id, vote_type):
+# This open all the available tags
+def tags(request):
+    content = {}
+    content["tags"] = Tag.objects.all()
+    return render(request, "core/tags.html", content)
+
+
+# Here object_type stands for whether it is a question object or answer object
+def question_vote(request, object_type, question_id, vote_type):
     # return HttpResponse("Question Vote")
-    question = Questions.objects.get(pk=question_id)
+    if object_type == "question":
+        question = Questions.objects.get(pk=question_id)
+    elif object_type == "answer":
+        question = Answers.objects.get(pk=question_id)
+    else:
+        raise Http404
     user = request.user
 
     # first check whether it is voting or it is bookmarking a question by a user
