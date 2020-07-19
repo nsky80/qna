@@ -12,14 +12,29 @@
             <!-- Configurations of tinymce app -->
         <script src="{% static 'tinymce/js/prism.js' %}"></script>
         <link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+        <style>   
+            /* Flexible footer */
+                  body {
+                      display: flex;
+                      min-height: 100vh;
+                      flex-direction: column;
+                    }
+            
+                    core {
+                      flex: 1 0 auto;
+                    }
 
+                </style>
+            
     </head>
 
     <body style="background-color:rgba(243, 248, 242, 1);">
         {% include 'core/includes/navbar.html' %}
         {% include 'core/includes/messaging.html' %}
+        <core>
         {% block content %}
         {% endblock %}
+    </core>
         {% include 'core/includes/footer.html' %}
         <script type="text/javascript">M.AutoInit();</script>
     </body>

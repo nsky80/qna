@@ -15,7 +15,8 @@ from core.forms import LoginForm, RegisterForm, AskQuestionForm, WriteAnswerForm
 from django.contrib import messages
 from django.core.paginator import Paginator
 from taggit.models import Tag
-
+from core.general_tools import create_page_object
+from django.contrib.contenttypes.models import ContentType
 
 class WriteAnswerView(FormView):
     content = {}
@@ -48,7 +49,7 @@ class WriteAnswerView(FormView):
             obj.question = Questions.objects.get(pk=question_id)
             obj.save()
             messages.success(request, "Answer Posted Successfully!")
-            return redirect(reverse('core:dashboard-view'))
+            return redirect(request.path)
 
         template = 'core/write_answer.html'
         return render(request, template, self.content)
@@ -57,17 +58,8 @@ class IndexView(View):
     content = {}
     def get(self, request):
         questions_list = Questions.objects.order_by("-created_on")
-        page = request.GET.get('page', 1)
-
-        paginator = Paginator(questions_list, 10)
-        try:
-            page_obj = paginator.page(page)
-        except PageNotAnInteger:
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
         self.content["page_title"] = "Recently Asked Questions"
-        self.content["page_obj"] = page_obj
+        self.content["questions"] = create_page_object(request, questions_list, 10, 1)
         return render(request, 'core/index.html', self.content)
 
 class DashboardView(FormView):
@@ -77,19 +69,17 @@ class DashboardView(FormView):
             user = request.user
             # Specifying authentication backends
             user.backend = 'django.contrib.core.backends.ModelBackend'
-            content['userdetail'] = user
+            # content['userdetail'] = user
             questions_list = Questions.objects.filter(user=user).order_by("-created_on")
-            page = request.GET.get('page', 1)
-
-            paginator = Paginator(questions_list, 5)
-            try:
-                page_obj = paginator.page(page)
-            except PageNotAnInteger:
-                page_obj = paginator.page(1)
-            except EmptyPage:
-                page_obj = paginator.page(paginator.num_pages)
-
-            content["page_obj"] = page_obj
+            # List where current user has answered
+            answers_list = Questions.objects.filter(pk__in=Answers.objects.filter(user=user).values_list("question", flat=True))
+            # Users bookmarked Questions
+            # Here in below 2 lines we are trying to access all the objects from generic key
+            ct = ContentType.objects.get_for_model(Questions)
+            bookmarks_list = Questions.objects.filter(pk__in=Activity.objects.filter(content_type=ct, user=user, activity_type="F").values_list("object_id", flat=True))
+            content["questions"] = create_page_object(request, questions_list, 4, 1)
+            content["answers"] = create_page_object(request, answers_list, 4, 2)
+            content["bookmarks"] = create_page_object(request, bookmarks_list, 4, 3)
             return render(request, 'core/dashboard.html', content)
         else:
             messages.info(request, "Login Required!")
@@ -127,7 +117,7 @@ class LoginView(FormView):
             content = {}
             content['form'] = AuthenticationForm
             messages.error(request, e)
-            print(e)
+            # print(e)
             return render(request, 'core/login.html', content)
 
 
@@ -166,7 +156,7 @@ class RegisterView(FormView):
 class AskQuestionView(FormView):
     content = {}
     content['form'] = AskQuestionForm
-    content["common_tags"] = Questions.tags.most_common()
+    content["common_tags"] = Questions.tags.most_common()[:10]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -202,16 +192,8 @@ def tagged(request, slug):
     common_tags = Questions.tags.most_common()[:4]
     # question = Questions.objects.filter(tags=tag)
     questions_list = Questions.objects.filter(tags=tag).order_by("-created_on")
-    page = request.GET.get('page', 1)
-    paginator = Paginator(questions_list, 10)
-    try:
-        page_obj = paginator.page(page)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
     content["page_title"] = "Tag: " + str(slug)
-    content["page_obj"] = page_obj
+    content["questions"] = create_page_object(request, questions_list, 10, 1)
     return render(request, 'core/index.html', content)
 
 
@@ -223,6 +205,7 @@ def tags(request):
 
 
 # Here object_type stands for whether it is a question object or answer object
+# It also support voting of a answer as well
 def question_vote(request, object_type, question_id, vote_type):
     # return HttpResponse("Question Vote")
     if object_type == "question":

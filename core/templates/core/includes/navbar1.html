@@ -1,0 +1,24 @@
+<div class="navbar-fixed">
+
+<nav style="background-color: #fafafb;">
+    <div class="nav-wrapper container">
+        {% load static %}
+      <a href="/" class="brand-logo"><img src="{% static 'core/images/new2.png' %}" style="vertical-align: middle" width="155" height="auto"></a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a style="color: blueviolet;" href='{% url "core:ask_question-view" %}'>Ask</a></li>
+        <li><a style="color: blueviolet;" href='{% url "core:dashboard-view" %}'>Dashboard</a></li>
+        <li><a style="color: blueviolet;" href='{% url "core:login-view" %}'>Login</a></li>
+        <li><a style="color: blueviolet;" href='{% url "core:register-view" %}'>Register</a></li>
+        <li><a style="color: blueviolet;" href='{% url "core:logout-view" %}'>Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="#">Sass</a></li>
+    <li><a href='{% url "core:dashboard-view" %}'>Dashboard</a></li>
+    <li><a href='{% url "core:login-view" %}'>Login</a></li>
+    <li><a href='{% url "core:register-view" %}'>Register</a></li>
+  </ul>
+</div>

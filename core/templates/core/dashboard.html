@@ -1,81 +1,175 @@
 {% extends 'core/header.html' %}
 
 {% block content %}
-<a href='{% url "core:logout-view" %}'>Logout</a>
-Welcome,{{userdetail.username}}
-<br />
+<div class="row" style="margin-bottom: -17px;background-color: rgba(241, 247, 240, 0.438);">
+    <!-- Left Side Menu  -->
+    {% include 'core/includes/side_navbar_for_qna.html' %}
 
-<h4 class="teal-text center">Asked Questions</h4>
-<ul class="collection">
-    {% load upvote_tags %}
 
-    {% for question in page_obj %}
-    <li class="collection-item" style="padding: 0px;">
-        <div class="row" style="margin: 0px;">
-            <!-- Upvote -->
-            <div class="col s3 m1 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
-                    <a href="/vote/{{question.id}}/up" style="color: black;">
-                        <i
-                            class="material-icons circle {% has_voted user=user question=question loc=1 %} small">keyboard_arrow_up</i></a>
-                    <p style="margin: 0px;"><strong>Upvote</strong></p>
-                </div>
-            </div>
-            <!-- Downvote -->
-            <div class="col s3 m1 center">
-                <div class="section">
-                    <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
-                    <a href="/vote/{{question.id}}/down" style="color: black;"><i
-                            class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
-                    <p style="margin: 0px;"><strong>Downvote</strong></p>
-                </div>
-            </div>
+    <!-- Middle side content goes here -->
+    <!-- This is asked Question Section -->
+    <div class="col s12 m6 l6" style="border: 2px solid #004d40;">
 
-            <!-- Answers section -->
-            <div class="col s3 m1">
-                <div class="section center">
-                    <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
+        <h5 class="indigo-text center"><b>Asked Questions</b></h5>
+        <ul class="collection">
+            {% load upvote_tags %}
 
-                    <a href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i
-                            class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
-                    <p style="margin: 0px;"><strong>Answers</strong></p>
-                </div>
-            </div>
-            <!-- Views section -->
-            <div class="col s3 m1">
-                <div class="section center">
-                    <p style="margin: 0px;"><b>{{question.views}}</b></p>
-                    <a href="#" style="color: black;"><i class="material-icons circle small">view_comfy</i></a>
-                    <p style="margin: 0px;"><strong>Views</strong></p>
-                </div>
-            </div>
-            <!-- Question Section -->
-            <div class="col s12 m8">
-                <div class="section">
-                    <a href="/questions/{{question.id}}/{{question.slug}}">
-                        <h6 style="margin: 4px; margin-top: -5px;" class="teal-text"><strong>{{question.title}}</strong>
-                        </h6>
-                    </a>
-                    <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong> by
-                        <strong>
-                            {{question.user}}</strong>
-                        <br>
-                        <!-- Tags will goes here -->
-                        {% for mt in question.tags.all %}
-                    <div class="chip">
-                        <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+            {% for question in questions %}
+            <li class="collection-item" style="padding: 0px;">
+                <div class="row" style="margin: 0px;">
+                    <!-- Answers section -->
+                    <div class="col s2 m2">
+                        <div class="section center">
+                            <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
+
+                            <a class="tooltipped" data-position="bottom" data-tooltip="Total Answers!"
+                                href="/questions/{{question.id}}/{{question.slug}}#write_answer"
+                                style="color: black;"><i
+                                    class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Answers</strong>
+                            </p>
+                        </div>
                     </div>
-                    {% endfor %}
 
-                    </p>
-
+                    <!-- Question list Section -->
+                    <div class="col s10 m10">
+                        <div class="section">
+                            <a href="/questions/{{question.id}}/{{question.slug}}">
+                                <h6 style="margin: 4px; margin-top: -5px;" class="teal-text">
+                                    <strong>{{question.title}}</strong>
+                                </h6>
+                            </a>
+                            <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong>
+                                by
+                                <strong>
+                                    {{question.user}}</strong>
+                                <br>
+                                <!-- Tags will goes here -->
+                                {% for mt in question.tags.all %}
+                            <div class="chip">
+                                <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+                            </div>
+                            {% endfor %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </li>
-    {% endfor %}
-</ul>
-{% include 'core/includes/pagination.html' %}
+            </li>
+            {% endfor %}
+            {% include 'core/includes/pagination.html' %}
+        </ul>
+    </div>
 
+
+    <!-- Right side content goes here -->
+    <!-- This is User's Answers Section -->
+    <div class="col s12 m6 l6 section scrollspy" id="question_answer" style="border: 2px solid #004d40;">
+        <h5 class="indigo-text center"><b>Your Answers</b></h5>
+        <ul class="collection">
+
+            {% for question in answers %}
+            <li class="collection-item" style="padding: 0px;">
+                <div class="row" style="margin: 0px;">
+                    <!-- Answers icon section -->
+                    <div class="col s2 m2">
+                        <div class="section center">
+                            <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
+
+                            <a class="tooltipped" data-position="bottom" data-tooltip="Total Answers!"
+                                href="/questions/{{question.id}}/{{question.slug}}#write_answer"
+                                style="color: black;"><i
+                                    class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Answers</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Question list Section -->
+                    <div class="col s10 m10">
+                        <div class="section">
+                            <a href="/questions/{{question.id}}/{{question.slug}}">
+                                <h6 style="margin: 4px; margin-top: -5px;" class="teal-text">
+                                    <strong>{{question.title}}</strong>
+                                </h6>
+                            </a>
+                            <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong>
+                                by
+                                <strong>
+                                    {{question.user}}</strong>
+                                <br>
+                                <!-- Tags will goes here -->
+                                {% for mt in question.tags.all %}
+                            <div class="chip">
+                                <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+                            </div>
+                            {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+            {% include 'core/includes/pagination_for_answer.html' %}
+        </ul>
+    </div>
+
+<!-- This is bookmarks section -->
+    <div class="col s12 m6 l6  section scrollspy" id="bookmarks" style="border: 2px solid #004d40;">
+        <h5 class="indigo-text center"><b>Bookmarks</b></h5>
+        <ul class="collection">
+            {% for question in bookmarks %}
+            <li class="collection-item" style="padding: 0px;">
+                <div class="row" style="margin: 0px;">
+                    <div class="col s2 m2 center">
+                        <div class="section">
+                            <p style="margin: 0px;"><b>{% bookmarks ques_obj=question %}</b></p>
+                            {% if user.is_authenticated %}
+                            <a class="tooltipped" data-position="bottom" data-tooltip="Remove From Favorite"
+                                href="/vote/question/{{question.id}}/bookmark?next={{request.path}}"
+                                style="color: green;"><i
+                                    class="material-icons circle small">{% has_voted user=user question=question loc=3 %}</i></a>
+                            {% else %}
+                            <a class="modal-trigger tooltipped" data-position="bottom"
+                                data-tooltip="Bookmark/Save this Question!" href="#login_register_modal"
+                                style="color: grey;"><i class="material-icons circle small">bookmark_border</i></a>
+
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Question list Section -->
+                    <div class="col s10 m10">
+                        <div class="section">
+                            <a href="/questions/{{question.id}}/{{question.slug}}">
+                                <h6 style="margin: 4px; margin-top: -5px;" class="teal-text">
+                                    <strong>{{question.title}}</strong>
+                                </h6>
+                            </a>
+                            <p style="margin: 0px;font-size: 14px;">Asked on <strong> {{question.created_on}}</strong>
+                                by
+                                <strong>
+                                    {{question.user}}</strong>
+                                <br>
+                                <!-- Tags will goes here -->
+                                {% for mt in question.tags.all %}
+                            <div class="chip">
+                                <a href="/tag/{{mt.slug}}" class="black-text">{{mt}}</a>
+                            </div>
+                            {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+            {% include 'core/includes/pagination_for_bookmark.html' %}
+        </ul>
+
+    </div>
+<!-- Fourth section coming soon.. -->
+    <div class="col s12 m6 l6" style="border: 2px solid #004d40;">
+        <h5 class="indigo-text center"><b>Coming Soon..</b></h5>
+    </div>
+
+</div>
 {% endblock %}

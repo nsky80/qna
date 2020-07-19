@@ -1,24 +1,98 @@
-<div class="navbar-fixed">
+{% load static %}
+<!-- This will used for dashboard like operations -->
+<style>
+	header,
+	core,
+	footer {
+		padding-left: 300px;
+	}
 
-<nav style="background-color: #fafafb;">
-    <div class="nav-wrapper container">
-        {% load static %}
-      <a href="/" class="brand-logo"><img src="{% static 'core/images/new2.png' %}" style="vertical-align: middle" width="155" height="auto"></a>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a style="color: blueviolet;" href='{% url "core:ask_question-view" %}'>Ask</a></li>
-        <li><a style="color: blueviolet;" href='{% url "core:dashboard-view" %}'>Dashboard</a></li>
-        <li><a style="color: blueviolet;" href='{% url "core:login-view" %}'>Login</a></li>
-        <li><a style="color: blueviolet;" href='{% url "core:register-view" %}'>Register</a></li>
-        <li><a style="color: blueviolet;" href='{% url "core:logout-view" %}'>Logout</a></li>
-      </ul>
-    </div>
-  </nav>
+	@media only screen and (max-width: 992px) {
 
-  <ul class="sidenav" id="mobile-demo">
-    <li><a href="#">Sass</a></li>
-    <li><a href='{% url "core:dashboard-view" %}'>Dashboard</a></li>
-    <li><a href='{% url "core:login-view" %}'>Login</a></li>
-    <li><a href='{% url "core:register-view" %}'>Register</a></li>
-  </ul>
-</div>
+		header,
+		core,
+		footer {
+			padding-left: 0;
+		}
+	}
+
+	@media only screen and (min-width: 1925px) {
+
+		header,
+		core,
+		footer,
+		.fixed-action-btn {
+			padding-right: 300px !important;
+			transition: all 0.5s ease;
+		}
+	}
+</style>
+
+<script>
+	$(document).ready(function () {
+		$('.sidenav').sidenav();
+		$('#sidebar-1').sidenav({ edge: 'left' });
+	});
+</script>
+
+<header>
+	<!-- Navigation bar goes Here -->
+	<nav style="background-color: #fafafb;" role="navigation">
+		<div class="nav-wrapper">
+			<div class="row">
+				<div class="col s12">
+					<a id="burger-icon-1" href="#" data-target="sidebar-1"
+						class="left sidenav-trigger show-on-medium"><i class="material-icons">menu</i></a>
+					{% load static %}
+					<a href="/" class="brand-logo"><img src="{% static 'core/images/new2.png' %}"
+							style="vertical-align: middle" width="155" height="auto"></a>
+					<ul id="nav-mobile" class="right hide-on-med-and-down">
+						<ul class="right hide-on-med-and-down">
+							<li><a style="color: blueviolet;" href='{% url "core:ask_question-view" %}'>Ask</a></li>
+							<li><a style="color: blueviolet;" href='{% url "core:dashboard-view" %}'>Dashboard</a></li>
+							<li><a style="color: blueviolet;" href='{% url "core:login-view" %}'>Login</a></li>
+							<li><a style="color: blueviolet;" href='{% url "core:register-view" %}'>Register</a></li>
+							<li><a style="color: blueviolet;" href='{% url "core:logout-view" %}'>Logout</a></li>
+						</ul>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+</header>
+
+
+<!-- SIDEBAR .SIDENAV-FIXED -->
+<ul id="sidebar-1" class="sidenav sidenav-fixed">
+	<li>
+		<div class="user-view">
+			<div class="background">
+				<img src="{% static 'core/images/user-profile-bg.jpg' %}" style="width: 100%;">
+			</div>
+			<a href="#!user"><img class="circle" src="{% static 'core/images/user.jpg' %}"></a>
+			<a href="#!name"><span class="black-text name"><b>{{user.username}}</b></span></a>
+			<a href="#!email"><span class="white-text email">{{user.email}}</span></a>
+		</div>
+	</li>
+	<li style="margin-top: -10px;" {% if request.get_full_path == '/' %}class="active" {% endif %}><a href="/"><i
+				class="material-icons left">home</i>Q&A Home</a></li>
+	<li {% if request.get_full_path == '/dashboard/' %}class="active" {% endif %}><a href="/dashboard/"><i
+				class="material-icons left">dashboard</i>Dashboard</a></li>
+	<li {% if request.get_full_path == '#' %}class="active" {% endif %}><a href="#"><i
+				class="material-icons">group</i>Users/Community</a></li>
+	<hr>
+	<li style="margin-top: -10px;"><a href="/trending/"><i
+				class="material-icons left">local_fire_department</i>Trending</a></li>
+	<li {% if request.get_full_path == '/tags/' %}class="active" {% endif %}><a href="/tags/"><i
+				class="material-icons left">label</i>Tags</a></li>
+	<hr>
+	<li {% if request.get_full_path == '/ask_question/' %}class="active" {% endif %}><a href="/ask_question"><i
+				class="material-icons">live_help</i>Ask a New Question</a></li>
+	<li {% if request.get_full_path == '/dashboard/#bookmarks' %} class="active" {% endif %}><a
+			href="/dashboard/#bookmarks"><i class="material-icons">bookmark</i>Bookmarks</a></li>
+	<li><a href="/dashboard/#question_answer"><i class="material-icons">question_answer</i>Your Questions/Answers</a>
+	</li>
+	<li><a href="/help"><i class="material-icons">help</i>Help</a></li>
+	<li style="margin-top: -10px;"><a href="/accounts/logout/"
+			class="waves-effect waves-light btn red darken-4">Logout</a></li>
+</ul>

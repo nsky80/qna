@@ -1,22 +1,22 @@
 
-{% if page_obj.has_other_pages %}
+{% if questions.has_other_pages %}
 <ul class="pagination">
-    {% if page_obj.has_previous %}
-    <li class="waves-effect"><a href="?page={{ page_obj.previous_page_number }}"><i
+    {% if questions.has_previous %}
+    <li class="waves-effect"><a href="?page1={{ questions.previous_page_number }}"><i
                 class="material-icons">chevron_left</i></a></li>
     {% else %}
     <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
     {% endif %}
-    {% for i in page_obj.paginator.page_range %}
-    {% if page_obj.number == i %}
-    <li class="active"><a href="?page={{ i }}">{{ i }}</a></li>
+    {% for i in questions.paginator.page_range %}
+    {% if questions.number == i %}
+    <li class="active"><a href="?page1={{ i }}">{{ i }}</a></li>
 
     {% else %}
-    <li class="waves-effect"><a href="?page={{ i }}">{{ i }}</a></li>
+    <li class="waves-effect"><a href="?page1={{ i }}">{{ i }}</a></li>
     {% endif %}
     {% endfor %}
-    {% if page_obj.has_next %}
-    <li class="waves-effect"><a href="?page={{ page_obj.next_page_number }}"><i
+    {% if questions.has_next %}
+    <li class="waves-effect"><a href="?page1={{ questions.next_page_number }}"><i
                 class="material-icons">chevron_right</i></a></li>
 
     {% else %}

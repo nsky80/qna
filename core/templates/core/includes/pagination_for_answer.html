@@ -1,0 +1,26 @@
+
+{% if answers.has_other_pages %}
+<ul class="pagination">
+    {% if answers.has_previous %}
+    <li class="waves-effect"><a href="?page2={{ answers.previous_page_number }}"><i
+                class="material-icons">chevron_left</i></a></li>
+    {% else %}
+    <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+    {% endif %}
+    {% for i in answers.paginator.page_range %}
+    {% if answers.number == i %}
+    <li class="active"><a href="?page2={{ i }}">{{ i }}</a></li>
+
+    {% else %}
+    <li class="waves-effect"><a href="?page2={{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if answers.has_next %}
+    <li class="waves-effect"><a href="?page2={{ answers.next_page_number }}"><i
+                class="material-icons">chevron_right</i></a></li>
+
+    {% else %}
+    <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+    {% endif %}
+</ul>
+{% endif %}

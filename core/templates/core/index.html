@@ -6,15 +6,15 @@
     {% include 'core/includes/side_navbar_for_qna.html' %}
 
     <!-- Middle Side Content Goes Here -->
-    <div class="col s12 m9 l8"
-        style="padding:25px;padding-top: 0% ;background-color: rgb(250, 250, 250);border-left: 3px solid #004d40;border-right: 3px solid #004d40;; border-top: 2px solid #004d40;">
+    <div class="col s12 m9 l9"
+        style="margin-bottom: -20px;padding:10px;background-color: rgb(250, 250, 250);border-left: 2px solid #004d40;border-right: 2px solid #004d40;; border-top: 2px solid #004d40;">
 
-        <h4 class="teal-text center">{{page_title}}</h4>
+        <h4 class="indigo-text center">{{page_title}}</h4>
 
         <ul class="collection">
             {% load upvote_tags %}
 
-            {% for question in page_obj %}
+            {% for question in questions %}
             <li class="collection-item" style="padding: 0px; ">
                 <div class="row" style="margin: 0px;">
                     <!-- Upvote -->
@@ -22,14 +22,16 @@
                         <div class="section">
                             <p style="margin: 0px;"><b>{% upvotes ques_obj=question %}</b></p>
                             {% if user.is_authenticated %}
-                            <a class="tooltipped" data-position="bottom" data-tooltip="Upvote this Question!" href="/vote/question/{{question.id}}/up" style="color: black;">
+                            <a class="tooltipped" data-position="top" data-tooltip="Upvote this Question!"
+                                href="/vote/question/{{question.id}}/up/?next={{request.path}}" style="color: black;">
                                 <i
                                     class="material-icons circle {% has_voted user=user question=question loc=1 %} small ">keyboard_arrow_up</i></a>
                             {% else %}
-                            <a class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Upvote this Question!" href="#login_register_modal" style="color: black;">
+                            <a class="modal-trigger tooltipped" data-position="top"
+                                data-tooltip="Upvote this Question!" href="#login_register_modal" style="color: black;">
                                 <i class="material-icons circle grey small">keyboard_arrow_up</i></a>
                             {% endif %}
-                            <p class="hide-on-med-only" style="margin: 0px;"><strong>Up</strong></p>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Up</strong></p>
                         </div>
                     </div>
                     <!-- Downvote -->
@@ -37,14 +39,17 @@
                         <div class="section">
                             <p style="margin: 0px;"><b>{% downvotes ques_obj=question %}</b></p>
                             {% if user.is_authenticated %}
-                            <a class="tooltipped" data-position="bottom" data-tooltip="Downvote this Question!" href="/vote/question/{{question.id}}/down" style="color: black;"><i
+                            <a class="tooltipped" data-position="bottom" data-tooltip="Downvote this Question!"
+                                href="/vote/question/{{question.id}}/down/?next={{request.path}}" style="color: black;"><i
                                     class="material-icons circle {% has_voted user=user question=question loc=2 %} small">keyboard_arrow_down</i></a>
                             {% else %}
-                            <a class="tooltipped modal-trigger" data-position="bottom" data-tooltip="Downvote this Question!" href="#login_register_modal" style="color: black;"><i
+                            <a class="tooltipped modal-trigger" data-position="bottom"
+                                data-tooltip="Downvote this Question!" href="#login_register_modal"
+                                style="color: black;"><i
                                     class="material-icons circle grey small">keyboard_arrow_down</i></a>
 
                             {% endif %}
-                            <p class="hide-on-med-only" style="margin: 0px;"><strong>Down</strong></p>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Down</strong></p>
                         </div>
                     </div>
 
@@ -53,22 +58,29 @@
                         <div class="section center">
                             <p style="margin: 0px;"><b>{{question.answers_set.all|length}}</b></p>
                             {% if user.is_authenticated %}
-                            <a class="tooltipped" data-position="bottom" data-tooltip="Number of Answer(s) Available!"  href="/questions/{{question.id}}/{{question.slug}}#write_answer" style="color: black;"><i
+                            <a class="tooltipped" data-position="right" data-tooltip="Number of Answer(s) Available!"
+                                href="/questions/{{question.id}}/{{question.slug}}#write_answer"
+                                style="color: black;"><i
                                     class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
                             {% else %}
-                            <a class="tooltipped modal-trigger" data-position="bottom" data-tooltip="Number of Answer(s) Available!"  href="#login_register_modal" style="color: black;"><i
+                            <a class="tooltipped modal-trigger" data-position="right"
+                                data-tooltip="Number of Answer(s) Available!" href="#login_register_modal"
+                                style="color: black;"><i
                                     class="material-icons circle {% has_an_answer question=question %} small">assignment_turned_in</i></a>
 
                             {% endif %}
-                            <p class="hide-on-med-only" style="margin: 0px;"><strong>Answers</strong></p>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Answers</strong>
+                            </p>
                         </div>
                     </div>
                     <!-- Views section -->
                     <div class="col s3 m1">
                         <div class="section center">
                             <p style="margin: 0px;"><b>{{question.views}}</b></p>
-                            <a class="tooltipped" data-position="bottom" data-tooltip="Total views!" href="#" style="color: black;"><i class="material-icons circle small">view_comfy</i></a>
-                            <p class="hide-on-med-only" style="margin: 0px;"><strong>Views</strong></p>
+                            <a class="tooltipped" data-position="bottom" data-tooltip="Total views!" href="#"
+                                style="color: black;"><i class="material-icons circle small">view_comfy</i></a>
+                            <p class="hide-on-med-only" style="margin: 0px; font-size: small;"><strong>Views</strong>
+                            </p>
                         </div>
                     </div>
                     <!-- Question Section -->
@@ -102,8 +114,8 @@
 
     <!-- Right side content goes here -->
 
-    <div class="col s12 m3 l2" style="border-top: 2px solid #004d40;">
-        <h6><b>Related Questions</b></h6>
+    <div class="col s12 m3 l3" style="border-top: 2px solid #004d40;">
+        <h6 class="center indigo-text"><b>Related Questions</b></h6>
     </div>
 
 </div>
