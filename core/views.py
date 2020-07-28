@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 from taggit.models import Tag
 from core.general_tools import create_page_object
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 class WriteAnswerView(FormView):
     content = {}
@@ -36,9 +37,6 @@ class WriteAnswerView(FormView):
                 question.save()
         self.content["question"] = question
         return render(request, 'core/write_answer.html', self.content)
-        # else:
-            # messages.info(request, "Login Required!")
-            # return redirect(reverse("core:login-view"))
 
     def post(self, request, question_id, question_slug):
 
@@ -110,7 +108,12 @@ class LoginView(FormView):
             user = authenticate(request=request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect(reverse("core:dashboard-view"))
+                messages.success(request, "Logged in as " + str(username))
+                next_url = request.GET.get('next')
+                if next_url:
+                    return HttpResponseRedirect(next_url)
+                else:
+                    return redirect("/dashboard/")
             else:
                 raise Exception("Invalid Credentials!")
         except Exception as e:
@@ -207,60 +210,96 @@ def tags(request):
 # Here object_type stands for whether it is a question object or answer object
 # It also support voting of a answer as well
 def question_vote(request, object_type, question_id, vote_type):
-    # return HttpResponse("Question Vote")
-    if object_type == "question":
-        question = Questions.objects.get(pk=question_id)
-    elif object_type == "answer":
-        question = Answers.objects.get(pk=question_id)
-    else:
-        raise Http404
-    user = request.user
+    if request.user.is_authenticated:
+        if object_type == "question":
+            question = Questions.objects.get(pk=question_id)
+        elif object_type == "answer":
+            question = Answers.objects.get(pk=question_id)
+        else:
+            raise Http404
+        user = request.user
 
-    # first check whether it is voting or it is bookmarking a question by a user
-    if vote_type == "up" or vote_type == "down":
-        act = question.activities.filter(user=user, activity_type = Activity.UP_VOTE) or question.activities.filter(user=user, activity_type = Activity.DOWN_VOTE)
-        # if already upvoted then do operation on that i.e. no need for creating new object
-        # if earlier vote had upvote and again upvote coming then delete the object because
-        # user wanted to undo the operation
-        if act:
-            obj = act[0]
-            if vote_type == "up":
-                # it means user earlier upvoted this question but now he wants to undo that opr
-                if obj.activity_type == Activity.UP_VOTE:
-                    obj.delete()
+        # first check whether it is voting or it is bookmarking a question by a user
+        if vote_type == "up" or vote_type == "down":
+            act = question.activities.filter(user=user, activity_type = Activity.UP_VOTE) or question.activities.filter(user=user, activity_type = Activity.DOWN_VOTE)
+            # if already upvoted then do operation on that i.e. no need for creating new object
+            # if earlier vote had upvote and again upvote coming then delete the object because
+            # user wanted to undo the operation
+            if act:
+                obj = act[0]
+                if vote_type == "up":
+                    # it means user earlier upvoted this question but now he wants to undo that opr
+                    if obj.activity_type == Activity.UP_VOTE:
+                        obj.delete()
+                    else:
+                        obj.activity_type = Activity.UP_VOTE
+                        obj.save()
+                        messages.success(request, "Upvoted Successfully!")
                 else:
-                    obj.activity_type = Activity.UP_VOTE
-                    obj.save()
+                    if obj.activity_type == Activity.DOWN_VOTE:
+                        obj.delete()
+                    else:
+                        obj.activity_type = Activity.DOWN_VOTE
+                        obj.save()
+                        messages.success(request, "Downvoted Successfully!")
+            # it means object doesn't exist as of now, need to create new table with vote
+            else:
+                if vote_type == "up":
+                    Activity.objects.create(content_object=question, activity_type=Activity.UP_VOTE, user=request.user)
                     messages.success(request, "Upvoted Successfully!")
-            else:
-                if obj.activity_type == Activity.DOWN_VOTE:
-                    obj.delete()
+                # now it must be down vote
                 else:
-                    obj.activity_type = Activity.DOWN_VOTE
-                    obj.save()
+                    Activity.objects.create(content_object=question, activity_type=Activity.DOWN_VOTE, user=request.user)
                     messages.success(request, "Downvoted Successfully!")
-        # it means object doesn't exist as of now, need to create new table with vote
+
+        # Here we are handling with bookmarking of question by perticular user
         else:
-            if vote_type == "up":
-                Activity.objects.create(content_object=question, activity_type=Activity.UP_VOTE, user=request.user)
-                messages.success(request, "Upvoted Successfully!")
-            # now it must be down vote
+            act = question.activities.filter(user=user, activity_type = Activity.FAVORITE)
+            if act:
+                obj = act[0]
+                obj.delete()
             else:
-                Activity.objects.create(content_object=question, activity_type=Activity.DOWN_VOTE, user=request.user)
-                messages.success(request, "Downvoted Successfully!")
+                Activity.objects.create(content_object=question, activity_type=Activity.FAVORITE, user=request.user)
+                messages.success(request, "Bookmarked/Saved Successfully!")
 
-    # Here we are handling with bookmarking of question by perticular user
-    else:
-        act = question.activities.filter(user=user, activity_type = Activity.FAVORITE)
-        if act:
-            obj = act[0]
-            obj.delete()
+        next_url = request.GET.get('next')
+        if next_url:
+            return HttpResponseRedirect(next_url)
         else:
-            Activity.objects.create(content_object=question, activity_type=Activity.FAVORITE, user=request.user)
-            messages.success(request, "Bookmarked/Saved Successfully!")
+            return redirect("/")
+    raise Http404
 
-    next_url = request.GET.get('next')
-    if next_url:
-        return HttpResponseRedirect(next_url)
+
+# It will handle for editing question
+def edit_question(request, question_id):
+    if request.user.is_authenticated:
+        obj = Questions.objects.get(pk=question_id)
+
+        if request.method == "POST":
+            form = AskQuestionForm(request.POST, instance=obj)
+
+            if form.is_valid():
+                try:
+                    # edited_obj = form.save(commit=False)
+                    # edited_obj.updated_on = timezone.now
+                    # edited_obj.save()
+                    edited_obj = form.save()
+                    edited_obj.updated_on = timezone.now()
+                    edited_obj.save()
+                    messages.success(request, "Edited Successfully!")
+                    next = "/questions/%d/%s/"%(obj.id, obj.slug)
+                    return redirect(next)
+                except Exception as ex:
+                    messages.error(request, f"Please Feedback error {ex}")
+        else:
+            form = AskQuestionForm(instance=obj)
+            args = {'form': form}
+            return render(request=request,
+                            template_name="core/ask_question.html",
+                            context=args)
     else:
-        return redirect("/")
+        return HttpResponseNotFound()         
+
+
+def trending(request):
+    return HttpResponse("Algorithm is in development!")

@@ -1,13 +1,40 @@
 {% extends 'core/header.html' %}
- 
+{% block title %}Login | Authorize Yourself and Explore!{% endblock %}
+
 {% block content %}
-<form action="" method="POST">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" name="login" value="Login" />
-</form>
-<br>
-<a href='{% url "core:register-view" %}'>Register</a>
+{% load static %}
+
+<div class="section"></div>
+  <center>
+    <h5 class="indigo-text"><b>Please, login into your account</b></h5>
+    <br>
+    <div class="container ">
+      <div class="z-depth-1 white hoverable row"
+        style="display: inline-block; padding: 32px 50px 10px 50px; border: 2px solid #004d40;">
+
+        <form class="col s12" method="post" style="text-align: left;">
+
+          {% csrf_token %}
+          {{ form.as_p}}
+
+
+          <div class='row'>
+            <label style='float: right;'>
+              <a class='pink-text' href='#!'><b>Forgot Password?</b></a>
+            </label>
+          </div>
+
+          <br>
+          <center>
+            <div class='row'>
+              <button type='submit' name='btn_login' class='col s12 btn btn-large waves-effect indigo'>Login</button>
+            </div>
+          </center>
+        </form>
+      </div>
+    </div>
+    <a href="/register/"><b>Create New Account</b></a>
+  </center>
+
+  <div class="section"></div>
 {% endblock %}
